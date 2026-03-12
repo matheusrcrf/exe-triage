@@ -49,3 +49,7 @@ def analyze(file: str, output_json: bool, output: str | None, verbose: bool) -> 
             json_output = jr.render(result)
             Path(output).write_text(json_output, encoding="utf-8")
             click.echo(f"\nJSON report saved to: {output}")
+
+
+if __name__ == "__main__":
+    cli()
