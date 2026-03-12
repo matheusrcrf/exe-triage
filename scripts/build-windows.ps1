@@ -20,7 +20,7 @@ Write-Host "==> Installing build dependencies..."
 python -m pip install -e ".[build]" --quiet
 
 Write-Host "==> Running PyInstaller..."
-pyinstaller exe_triage.spec --noconfirm
+python -m PyInstaller exe_triage.spec --noconfirm
 
 if (-not (Test-Path "dist\exe-triage\exe-triage.exe")) {
     Write-Error "Build failed: exe-triage.exe not found in dist\exe-triage\"
