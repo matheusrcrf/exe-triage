@@ -23,6 +23,9 @@ dev = [
     "pytest-cov>=4.1.0",
     "ruff>=0.3.0",
 ]
+build = [
+    "pyinstaller>=6.0.0",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

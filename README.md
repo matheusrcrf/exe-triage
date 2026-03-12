@@ -41,6 +41,24 @@ exe-triage analyzes `.exe` files without executing them, without sending data an
 
 ## Installation
 
+### Windows — standalone executable (recommended for end users)
+
+No Python installation required. Download, extract, and run.
+
+1. Download `exe-triage-vX.X.X-windows-x64.zip` from the [Releases](https://github.com/matheusrcrf/exe-triage/releases) page
+2. Extract the zip — you will get an `exe-triage\` folder
+3. Open PowerShell inside that folder and run:
+
+```powershell
+.\exe-triage.exe analyze "C:\Users\you\Downloads\suspicious.exe"
+```
+
+To use it from anywhere, add the extracted folder to your `PATH`.
+
+> **SmartScreen notice:** Windows may show a "Windows protected your PC" warning the first time you run a downloaded executable. This is expected for unsigned binaries distributed outside the Microsoft Store. Click **More info → Run anyway** to proceed. If your organization's policy blocks unsigned executables entirely, use the [from-source installation](#from-source) instead.
+
+### From source
+
 Requires Python 3.11+.
 
 **Linux / macOS**
@@ -66,7 +84,7 @@ python -m pip install --upgrade pip
 python -m pip install .
 ```
 
-If you prefer not to change the execution policy, you can invoke Python from the virtual environment directly:
+If you prefer not to change the execution policy, invoke Python from the virtual environment directly:
 
 ```powershell
 .\.venv\Scripts\python -m pip install --upgrade pip
@@ -239,6 +257,30 @@ Planned for v2:
 - Optional YARA rule support
 - `.dll` file support
 - Full certificate validation via Windows API (`wintrust`)
+
+---
+
+## Building the Windows executable
+
+The standalone Windows executable is built with PyInstaller from a Windows machine.
+
+```powershell
+# From the project root (Windows only)
+pip install -e ".[build]"
+pyinstaller exe_triage.spec --noconfirm
+```
+
+Or use the provided script, which also packages the output as a zip ready for release:
+
+```powershell
+.\scripts\build-windows.ps1 -Version "1.0.0"
+```
+
+Output:
+- `dist\exe-triage\exe-triage.exe` — standalone executable + dependencies
+- `dist\exe-triage-v1.0.0-windows-x64.zip` — release archive
+
+The spec file (`exe_triage.spec`) is committed to the repository and encodes all build decisions. Do not commit the `dist/` or `build/` directories.
 
 ---
 
