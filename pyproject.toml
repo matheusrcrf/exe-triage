@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "exe-triage"
+version = "1.0.0"
+description = "Local static triage tool for Windows PE executables"
+requires-python = ">=3.11"
+dependencies = [
+    "pefile>=2023.2.7",
+    "click>=8.1.7",
+    "rich>=13.7.0",
+    "cryptography>=42.0.0",
+]
+
+[project.scripts]
+exe-triage = "exe_triage.cli:cli"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.3.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
