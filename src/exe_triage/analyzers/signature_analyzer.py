@@ -1,3 +1,4 @@
+import warnings
 from pathlib import Path
 
 import pefile
@@ -29,7 +30,7 @@ def analyze(path: Path, result: AnalysisResult) -> None:
             signed=False,
             signature_status="unreadable",
             publisher=None,
-            notes=f"Erro ao analisar assinatura: {e}",
+            notes=f"Error reading signature: {e}",
         )
         result.errors.append(f"signature_analyzer: {e}")
 
@@ -40,7 +41,7 @@ def _analyze_signature(pe: pefile.PE, path: Path, result: AnalysisResult) -> Non
         result.signature = SignatureInfo(
             signed=False,
             signature_status="absent",
-            notes="PE sem DATA_DIRECTORY",
+            notes="PE has no DATA_DIRECTORY",
         )
         return
 
@@ -62,10 +63,10 @@ def _analyze_signature(pe: pefile.PE, path: Path, result: AnalysisResult) -> Non
         signature_status="present",
         publisher=publisher,
         notes=(
-            "Assinatura detectada. AVISO: a v1 detecta apenas presença de assinatura e extrai "
-            "metadados básicos. Não realiza validação de cadeia de certificação, revogação ou "
-            "timestamp. 'signed: true' indica que um certificado foi encontrado na estrutura PE, "
-            "não que o Windows o consideraria válido."
+            "Signature detected. WARNING: v1 only detects signature presence and extracts basic "
+            "metadata. It does not validate the certificate chain, revocation, or timestamp. "
+            "'signed: true' means a certificate block was found in the PE structure, not that "
+            "Windows or any CA would consider the signature valid."
         ),
     )
 
@@ -82,11 +83,13 @@ def _extract_publisher(path: Path, offset: int, size: int) -> str | None:
         if not cert_data:
             return None
 
-        certs = load_der_pkcs7_certificates(cert_data)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            certs = load_der_pkcs7_certificates(cert_data)
         if not certs:
             return None
 
-        # Use the first certificate (signing certificate is typically last, but we take first for publisher)
+        # Use the last certificate (typically the signing certificate)
         cert = certs[-1]
         subject = cert.subject
         try:

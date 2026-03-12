@@ -60,9 +60,18 @@ pip install .
 git clone https://github.com/matheusrcrf/exe-triage.git
 cd exe-triage
 python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install --upgrade pip
-pip install .
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install .
+```
+
+If you prefer not to change the execution policy, you can invoke Python from the virtual environment directly:
+
+```powershell
+.\.venv\Scripts\python -m pip install --upgrade pip
+.\.venv\Scripts\python -m pip install .
+.\.venv\Scripts\exe-triage analyze suspicious.exe
 ```
 
 **For development (adds pytest, ruff):**
@@ -202,7 +211,7 @@ python3 -m pytest tests/ -v
 python3 -m pytest tests/test_heuristic_engine.py -v
 
 # Run a single test
-python3 -m pytest tests/test_heuristic_engine.py::test_createremotethread_minimum_alto -v
+python3 -m pytest tests/test_heuristic_engine.py::test_createremotethread_minimum_high -v
 
 # Lint
 ruff check src/ tests/
