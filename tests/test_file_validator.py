@@ -8,17 +8,17 @@ def test_valid_pe_passes(valid_pe32):
 
 
 def test_nonexistent_file_raises():
-    with pytest.raises(ValidationError, match="não encontrado"):
+    with pytest.raises(ValidationError, match="not found"):
         validate("/nonexistent/path/file.exe")
 
 
 def test_empty_file_raises(empty_file):
-    with pytest.raises(ValidationError, match="vazio"):
+    with pytest.raises(ValidationError, match="empty"):
         validate(str(empty_file))
 
 
 def test_non_pe_file_raises(non_pe_file):
-    with pytest.raises(ValidationError, match="PE válido"):
+    with pytest.raises(ValidationError, match="valid PE"):
         validate(str(non_pe_file))
 
 

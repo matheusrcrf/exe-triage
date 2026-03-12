@@ -28,7 +28,7 @@ def make_full_result() -> AnalysisResult:
     result.signature = SignatureInfo(signed=False, signature_status="absent")
     result.technology = TechnologyInfo(detected="unknown", confidence="low", evidence=[])
     result.iocs = IOCResult()
-    result.risk_score = RiskScore(total=0, level="baixo", breakdown={})
+    result.risk_score = RiskScore(total=0, level="low", breakdown={})
     return result
 
 

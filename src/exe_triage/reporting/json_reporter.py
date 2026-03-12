@@ -15,7 +15,7 @@ def render(result: AnalysisResult) -> str:
     # risk_score fields flattened
     risk_score = data.pop("risk_score", {})
     data["risk_score"] = risk_score.get("total", 0)
-    data["risk_level"] = risk_score.get("level", "baixo")
+    data["risk_level"] = risk_score.get("level", "low")
     data["risk_breakdown"] = risk_score.get("breakdown", {})
 
     return json.dumps(data, ensure_ascii=False, indent=2)

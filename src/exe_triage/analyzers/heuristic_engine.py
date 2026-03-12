@@ -58,12 +58,12 @@ def score(result: AnalysisResult) -> None:
         elif rule.source == "signature":
             if rule.id == "WEAK_UNSIGNED" and not result.signature.signed:
                 matched = True
-                evidence = "Executável sem assinatura digital"
+                evidence = "Executable has no digital signature"
 
         elif rule.source == "iocs":
             if rule.id == "WEAK_MULTIPLE_URLS" and len(result.iocs.urls) > 3:
                 matched = True
-                evidence = f"{len(result.iocs.urls)} URLs detectadas"
+                evidence = f"{len(result.iocs.urls)} URLs detected"
 
         if matched:
             findings.append(
@@ -93,12 +93,12 @@ def score(result: AnalysisResult) -> None:
     active_categories = {f.category for f in findings}
 
     if "process_injection" in active_categories:
-        if level in ("baixo", "médio"):
-            level = "alto"
+        if level in ("low", "medium"):
+            level = "high"
 
     if "obfuscation" in active_categories and "remote_download" in active_categories:
-        if level in ("baixo", "médio"):
-            level = "alto"
+        if level in ("low", "medium"):
+            level = "high"
 
     result.findings = findings
     result.risk_score = RiskScore(total=score_total, level=level, breakdown=breakdown)
@@ -107,13 +107,13 @@ def score(result: AnalysisResult) -> None:
 
 def _classify_score(score: int) -> str:
     if score >= 80:
-        return "crítico"
+        return "critical"
     elif score >= 45:
-        return "alto"
+        return "high"
     elif score >= 20:
-        return "médio"
+        return "medium"
     else:
-        return "baixo"
+        return "low"
 
 
 def _collect_all_strings(result: AnalysisResult) -> list[str]:
@@ -145,9 +145,9 @@ def _generate_recommendations(active_categories: set[str], level: str) -> list[s
         if cat in active_categories:
             recommendations.append(RECOMMENDATIONS_BY_CATEGORY[cat])
 
-    if level == "crítico":
-        recommendations.append("Não executar. Analisar em ambiente isolado.")
-    elif level == "alto":
-        recommendations.append("Execução de alto risco. Analisar em ambiente controlado antes de executar.")
+    if level == "critical":
+        recommendations.append("Do not execute. Analyze in an isolated environment.")
+    elif level == "high":
+        recommendations.append("High execution risk. Analyze in a controlled environment before running.")
 
     return recommendations

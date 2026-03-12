@@ -61,7 +61,7 @@ class HeuristicFinding:
 @dataclass
 class RiskScore:
     total: int = 0
-    level: str = "baixo"  # "baixo" | "médio" | "alto" | "crítico"
+    level: str = "low"  # "low" | "medium" | "high" | "critical"
     breakdown: dict[str, int] = field(default_factory=dict)
 
 

@@ -14,7 +14,7 @@ class HeuristicRule:
 
 
 HEURISTIC_RULES: list[HeuristicRule] = [
-    # -- SINAIS FORTES -------------------------------------------------------
+    # -- STRONG SIGNALS -------------------------------------------------------
 
     # Process Injection
     HeuristicRule(
@@ -23,7 +23,7 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="imports",
         category="process_injection",
         weight=35,
-        description="Import de CreateRemoteThread — injeção de código em processo remoto",
+        description="CreateRemoteThread import — code injection into a remote process",
     ),
     HeuristicRule(
         id="INJ_WRITEPROCESSMEMORY",
@@ -31,7 +31,7 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="imports",
         category="process_injection",
         weight=30,
-        description="Import de WriteProcessMemory — escrita em memória de processo externo",
+        description="WriteProcessMemory import — writing to memory of an external process",
     ),
     HeuristicRule(
         id="INJ_VIRTUALALLOCEX",
@@ -39,27 +39,27 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="imports",
         category="process_injection",
         weight=30,
-        description="Import de VirtualAllocEx — alocação em processo remoto",
+        description="VirtualAllocEx import — memory allocation in a remote process",
     ),
 
-    # Download remoto
+    # Remote download
     HeuristicRule(
         id="DL_URLDOWNLOADTOFILE",
         signal="URLDownloadToFile",
         source="imports",
         category="remote_download",
         weight=25,
-        description="Import de URLDownloadToFile — download remoto de arquivo",
+        description="URLDownloadToFile import — remote file download",
     ),
 
-    # PowerShell ofuscado
+    # Obfuscated PowerShell
     HeuristicRule(
         id="PS_ENCODEDCOMMAND",
         signal="EncodedCommand",
         source="strings",
         category="obfuscation",
         weight=30,
-        description="EncodedCommand — PowerShell com payload Base64",
+        description="EncodedCommand — PowerShell with Base64-encoded payload",
     ),
     HeuristicRule(
         id="PS_EXECUTIONPOLICY_BYPASS",
@@ -67,10 +67,10 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="strings",
         category="obfuscation",
         weight=25,
-        description="ExecutionPolicy Bypass — evasão de política de execução",
+        description="ExecutionPolicy Bypass — evading PowerShell execution policy",
     ),
 
-    # -- SINAIS MEDIOS -------------------------------------------------------
+    # -- MEDIUM SIGNALS -------------------------------------------------------
 
     HeuristicRule(
         id="PERSIST_RUN",
@@ -78,7 +78,7 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="strings",
         category="persistence",
         weight=20,
-        description="Referência a chave Run no registro — possível persistência",
+        description="Reference to Run registry key — possible persistence mechanism",
     ),
     HeuristicRule(
         id="PERSIST_RUNONCE",
@@ -86,7 +86,7 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="strings",
         category="persistence",
         weight=20,
-        description="Referência a chave RunOnce no registro",
+        description="Reference to RunOnce registry key — possible persistence mechanism",
     ),
     HeuristicRule(
         id="AUTO_POWERSHELL",
@@ -94,7 +94,7 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="strings",
         category="suspicious_automation",
         weight=15,
-        description="Referência a powershell nas strings",
+        description="Reference to powershell in strings",
     ),
     HeuristicRule(
         id="AUTO_SCHTASKS",
@@ -102,7 +102,7 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="strings",
         category="suspicious_automation",
         weight=15,
-        description="Referência a schtasks — agendamento de tarefas",
+        description="Reference to schtasks — scheduled task creation",
     ),
     HeuristicRule(
         id="CTX_CRACK",
@@ -110,17 +110,17 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="strings",
         category="suspicious_context",
         weight=20,
-        description="Palavras associadas a cracks/keygens/ativações ilegítimas",
+        description="Strings associated with cracks, keygens, or illegitimate activations",
     ),
 
-    # -- SINAIS FRACOS / CONTEXTUAIS ----------------------------------------
+    # -- WEAK / CONTEXTUAL SIGNALS --------------------------------------------
     HeuristicRule(
         id="WEAK_UNSIGNED",
         signal="unsigned",
         source="signature",
         category="weak_context",
         weight=10,
-        description="Executável sem assinatura digital",
+        description="Executable has no digital signature",
     ),
     HeuristicRule(
         id="WEAK_APPDATA",
@@ -128,7 +128,7 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="strings",
         category="weak_context",
         weight=5,
-        description="Referência a %AppData%",
+        description="Reference to %AppData%",
     ),
     HeuristicRule(
         id="WEAK_TEMP",
@@ -136,7 +136,7 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="strings",
         category="weak_context",
         weight=5,
-        description="Referência a %Temp%",
+        description="Reference to %Temp%",
     ),
     HeuristicRule(
         id="WEAK_STARTUP",
@@ -144,7 +144,7 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="strings",
         category="weak_context",
         weight=8,
-        description="Referência a pasta Startup",
+        description="Reference to Startup folder",
     ),
     HeuristicRule(
         id="WEAK_TASKKILL",
@@ -152,7 +152,7 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="strings",
         category="weak_context",
         weight=5,
-        description="Referência a taskkill",
+        description="Reference to taskkill",
     ),
     HeuristicRule(
         id="WEAK_MULTIPLE_URLS",
@@ -160,18 +160,18 @@ HEURISTIC_RULES: list[HeuristicRule] = [
         source="iocs",
         category="weak_context",
         weight=8,
-        description="Múltiplas URLs detectadas",
+        description="Multiple URLs detected",
     ),
 ]
 
 WEAK_CONTEXT_CAP = 20
 
 RECOMMENDATIONS_BY_CATEGORY = {
-    "process_injection": "Detectados imports de injeção de processo. Risco elevado de código malicioso que injeta em outros processos.",
-    "remote_download": "Detectado download remoto via URLDownloadToFile. O executável pode baixar payloads adicionais.",
-    "obfuscation": "Detectados indicadores de ofuscação (PowerShell codificado/bypass). Análise em sandbox recomendada.",
-    "persistence": "Detectadas referências a chaves de registro de persistência (Run/RunOnce). Possível mecanismo de persistência.",
-    "suspicious_automation": "Detectadas referências a ferramentas de automação suspeitas (schtasks, taskkill, powershell).",
-    "suspicious_context": "Detectadas strings associadas a software ilegítimo (crack, keygen, serial).",
-    "weak_context": "Indicadores contextuais detectados. Podem ser legítimos dependendo do contexto de uso.",
+    "process_injection": "Process injection imports detected. High risk of code injection into other processes.",
+    "remote_download": "Remote download via URLDownloadToFile detected. Binary may fetch additional payloads.",
+    "obfuscation": "Obfuscation indicators detected (encoded/bypass PowerShell). Sandbox analysis recommended.",
+    "persistence": "References to persistence registry keys (Run/RunOnce) detected. Possible persistence mechanism.",
+    "suspicious_automation": "References to suspicious automation tools detected (schtasks, taskkill, powershell).",
+    "suspicious_context": "Strings associated with illegitimate software detected (crack, keygen, serial).",
+    "weak_context": "Contextual indicators detected. May be legitimate depending on use context.",
 }

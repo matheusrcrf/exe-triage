@@ -31,9 +31,9 @@ def analyze(path: Path, result: AnalysisResult) -> None:
     try:
         pe = pefile.PE(str(path), fast_load=False)
     except pefile.PEFormatError as e:
-        raise PEAnalysisError(f"Falha ao parsear PE: {e}") from e
+        raise PEAnalysisError(f"Failed to parse PE: {e}") from e
     except Exception as e:
-        raise PEAnalysisError(f"Erro inesperado ao parsear PE: {e}") from e
+        raise PEAnalysisError(f"Unexpected error parsing PE: {e}") from e
 
     try:
         # File type and architecture
@@ -84,11 +84,11 @@ def analyze(path: Path, result: AnalysisResult) -> None:
                 imports[dll_name] = funcs
             result.pe_info.imports = imports
         else:
-            result.errors.append("PE sem tabela de imports (possível executável empacotado ou malformado)")
+            result.errors.append("PE has no import table (possibly packed or malformed)")
 
     except PEAnalysisError:
         raise
     except Exception as e:
-        raise PEAnalysisError(f"Erro ao extrair informações PE: {e}") from e
+        raise PEAnalysisError(f"Error extracting PE information: {e}") from e
     finally:
         pe.close()

@@ -12,7 +12,7 @@ def clean_result() -> AnalysisResult:
 def test_empty_result_is_low():
     result = clean_result()
     score(result)
-    assert result.risk_score.level == "baixo"
+    assert result.risk_score.level == "low"
     assert result.risk_score.total == 0
 
 
@@ -22,12 +22,12 @@ def test_only_weak_signals_max_medium():
     result.iocs = IOCResult(file_paths=["%Temp%\\file.exe", "%AppData%\\data"], urls=["http://a.com"] * 5)
     result.indicators = []
     score(result)
-    # Even with weak signals, score should be capped and level should not exceed "médio"
+    # Even with weak signals, score should be capped and level should not exceed "medium"
     # unless total >= 45
-    assert result.risk_score.level in ("baixo", "médio")
+    assert result.risk_score.level in ("low", "medium")
 
 
-def test_createremotethread_minimum_alto():
+def test_createremotethread_minimum_high():
     result = AnalysisResult()
     result.signature = SignatureInfo(signed=True, signature_status="present")
     result.pe_info = PEInfo(
@@ -38,11 +38,11 @@ def test_createremotethread_minimum_alto():
         Indicator(name="CreateRemoteThread", source="imports", category="process_injection", value="CreateRemoteThread in KERNEL32.dll")
     ]
     score(result)
-    # CreateRemoteThread alone (weight 35) → level should be at least "alto" due to elevation
-    assert result.risk_score.level in ("alto", "crítico")
+    # CreateRemoteThread alone (weight 35) → level should be at least "high" due to elevation
+    assert result.risk_score.level in ("high", "critical")
 
 
-def test_injection_obfuscation_download_critico():
+def test_injection_obfuscation_download_critical():
     result = AnalysisResult()
     result.signature = SignatureInfo(signed=False, signature_status="absent")
     result.pe_info = PEInfo(
@@ -60,10 +60,9 @@ def test_injection_obfuscation_download_critico():
         Indicator(name="EncodedCommand", source="strings", category="obfuscation", value="-EncodedCommand base64"),
     ]
     result.iocs = IOCResult(urls=["http://evil.com/payload.bin"] * 5)
-    # Add strings for heuristic matching
     score(result)
-    assert result.risk_score.level == "crítico"
-    assert "Não executar" in " ".join(result.recommendations)
+    assert result.risk_score.level == "critical"
+    assert "Do not execute" in " ".join(result.recommendations)
 
 
 def test_weak_context_cap():
